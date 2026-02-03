@@ -1,12 +1,16 @@
-export interface gameStatistics{
-    id: number,
-    name: string,
-    wins: number,
-    losses: number,
-    totalScore: number,
-    rating?: string
+export interface Event {
+    id: number;
+    name: string;
+    date: string; 
+    capacity: number;
+    registrationCount: number;
 }
 
+export interface Attendee {
+    id: number;
+    name: string;
+    email: string;
+}
 
 export interface HealthCheckResponse {
     status: string;
