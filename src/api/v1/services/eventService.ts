@@ -1,17 +1,12 @@
-import playerData from "../data.json"
-import { gameStatistics } from "../interface_properties";
+import { events } from "../../../data/eventData";
+import { Event } from "../../../interface_properties";
 
 // Returns all players with a count
-export function activePlayer(){
-    const players:gameStatistics[] = playerData;
+export function eventsCount(){
+    const eventsData:Event[] = events;
 
-    const result:gameStatistics[] = [];
+    const result = eventsData.length;
 
-    for (let player of players){
-        if(player.wins + player.losses > 0){
-            result.push(player);
-        }   
-    };
     return result;
 }
 

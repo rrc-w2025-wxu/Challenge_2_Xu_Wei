@@ -1,13 +1,19 @@
 import { Request, Response } from "express";
-import * as itemService from "../services/itemService";
+import { HealthCheckResponse } from "../../../interface_properties";
+import * as itemService from "../services/eventService";
 
 export const healthCheck = (req: Request, res: Response): void => {
-    const items: string[] = itemService.getAllItems();
-    res.status(200).json({ message: "Get all items", data: items });
+    const healthCheck:HealthCheckResponse = {
+        status: "OK",
+        uptime: process.uptime(),
+        timestamp: new Date().toISOString(),
+        version: "1.0.0",
+    };
+    res.send(healthCheck);
 };
 
-export const createItem = (req: Request, res: Response): void => {
-    const newItem: string = req.body;
+export const eventsCount = (req: Request, res: Response): void => {
+    const
     itemService.createItem(newItem);
     res.status(201).json({ message: "Item created", data: newItem });
 };

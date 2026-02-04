@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 import {
-    getAllItems,
+    healthCheck,
     createItem,
     updateItem,
     deleteItem,
@@ -8,7 +8,7 @@ import {
 
 const eventRoutes: Router = express.Router();
 
-eventRoutes.get("/health", getAllItems);
+eventRoutes.get("/health", healthCheck);
 eventRoutes.get("/events", createItem);
 eventRoutes.get("/events/:id", updateItem);
 eventRoutes.get("/events/:id/popularity", deleteItem);
