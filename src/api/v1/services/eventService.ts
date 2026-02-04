@@ -1,3 +1,4 @@
+import express, { Express } from "express";
 import { events } from "../../../data/eventData";
 import { Event } from "../../../interface_properties";
 
@@ -5,18 +6,18 @@ import { Event } from "../../../interface_properties";
 export function eventsCount(){
     const eventsData:Event[] = events;
 
-    const result = eventsData.length;
+    const result:number = eventsData.length;
 
     return result;
 }
 
 // Returns a single player by ID (404 if not found)
-export function searchPlayer(id:number):gameStatistics | undefined{
-    const players:gameStatistics[] = playerData;
+export function singleEvent(id:number):Event | undefined{
+    const eventsData:Event[] = events;
 
-    for(let player of players){
-        if(id === player.id){
-            return player;
+    for(let event of eventsData){
+        if(id === event.id){
+            return event;
         };
     };
 

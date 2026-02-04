@@ -13,16 +13,17 @@ export const healthCheck = (req: Request, res: Response): void => {
 };
 
 export const eventsCount = (req: Request, res: Response): void => {
-    const
-    itemService.createItem(newItem);
-    res.status(201).json({ message: "Item created", data: newItem });
+    const countData = itemService.eventsCount();
+    res.status(200).json({ message: "Number of events", data: countData });
 };
 
-export const updateItem = (req: Request, res: Response): void => {
-    const { id } = req.params;
-    const updatedItem: string = req.body;
-    itemService.updateItem(id, updatedItem);
-    res.status(200).json({ message: "Item updated", data: updatedItem });
+export const singleEvent = (req: Request, res: Response): void => {
+    const eventId  = Number(req.params.id);
+    const event = itemService.singleEvent(eventId);
+    if (!itemService.singleEvent(eventId)){
+        res.status(401).json({ message: "Event does not exist" });
+    }
+    res.status(200).json({ message: "Event selected", data: event });
 };
 
 export const deleteItem = (req: Request, res: Response): void => {
