@@ -1,12 +1,12 @@
-import { Event, EventCreateInput } from "../../../interface_properties";
+import { Event, EventCreateInput } from "../src/interface_properties";
 import { 
   eventsCount, 
   singleEvent, 
   popularity, 
   createItem, 
   deleteEvent 
-} from "../yourServiceFile"; // Replace with your service file path
-import { events } from "../../../data/eventData";
+} from "../src/api/v1/services/eventService"; 
+import { events } from "../src/data/eventData";
 
 // Reset events array before each test to ensure test independence
 const resetEvents = () => {

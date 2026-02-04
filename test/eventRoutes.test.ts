@@ -1,7 +1,7 @@
 import request from "supertest";
 import express, { Express } from "express";
-import eventRoutes from "../routes/eventRoutes"; // replace with your path
-import { events } from "../data/eventData"; // your in-memory events array
+import eventRoutes from "../src/api/v1/routes/eventRoutes"; 
+import { events } from "../src/data/eventData"; 
 
 // Create an Express app for testing
 const app: Express = express();
