@@ -21,13 +21,32 @@ export const singleEvent = (req: Request, res: Response): void => {
     const eventId  = Number(req.params.id);
     const event = itemService.singleEvent(eventId);
     if (!itemService.singleEvent(eventId)){
-        res.status(401).json({ message: "Event does not exist" });
+        res.status(401).json({ message: "Event does not found." });
     }
     res.status(200).json({ message: "Event selected", data: event });
 };
 
-export const deleteItem = (req: Request, res: Response): void => {
-    const { id } = req.params;
-    itemService.deleteItem(id);
+export const popularity = (req: Request, res: Response): void => {
+    const eventId  = Number(req.params.id);
+    const event = itemService.popularity(eventId);
+    res.status(200).json({ message: "Item selected with popularity:", data:event });
+};
+
+export const createItem = (req: Request, res: Response): void => {
+    const { name, date, capacity } = req.body;
+    const newItem: EventCreateInput = createItem(
+    name,
+    date,               
+    capacity  
+  );
+    res.status(201).json({ message: "Item created", data: newItem });
+};
+
+
+
+export const deleteEvent = (req: Request, res: Response): void => {
+    const eventId  = Number(req.params.id);
+    itemService.deleteEvent(eventId);
     res.status(200).json({ message: "Item deleted" });
 };
+

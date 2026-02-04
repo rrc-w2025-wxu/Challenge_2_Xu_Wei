@@ -1,72 +1,73 @@
-    jest.mock("../src/data.json", () => [
-        {
-            "id": 1,
-            "name": "ShadowStrike",
-            "wins": 15,
-            "losses": 5,
-            "totalScore": 28500
-        },
-        {
-            "id": 2,
-            "name": "NoobMaster",
-            "wins": 3,
-            "losses": 12,
-            "totalScore": 4200
-        },
-        {
-            "id": 3,
-            "name": "ProGamer99",
-            "wins": 0,
-            "losses": 0,
-            "totalScore": 0
-        },
-        {
-            "id": 4,
-            "name": "Jack",
-            "wins": 2,
-            "losses": 0,
-            "totalScore": 1000
-        },
-        {
-            "id": 5,
-            "name": "Tom",
-            "wins": 4,
-            "losses": 2,
-            "totalScore": 5000
-        }
-    ]);
+import request from "supertest";
+import express, { Express } from "express";
+import eventRoutes from "../routes/eventRoutes"; // replace with your path
+import { events } from "../data/eventData"; // your in-memory events array
 
-import { ratingPlayer } from "../src/services/playerService";
+// Create an Express app for testing
+const app: Express = express();
+app.use(express.json()); // parse JSON body
+app.use("/", eventRoutes);
 
-describe("App Functions", () => {
+// Reset the events array before each test
+const resetEvents = () => {
+  events.length = 0;
+  events.push(
+    { id: 1, name: "Tech Conference 2025", date: "2025-03-15T09:00:00.000Z", capacity: 200, registrationCount: 185 },
+    { id: 2, name: "Startup Pitch Night", date: "2025-02-20T18:00:00.000Z", capacity: 50, registrationCount: 12 },
+    { id: 3, name: "Web Dev Workshop", date: "2025-02-10T10:00:00.000Z", capacity: 30, registrationCount: 30 }
+  );
+};
 
-    test("Normal case with wins and losses", () => {
-        const result = ratingPlayer(2); 
-        expect(result).toStrictEqual({"id":2,"name":"NoobMaster","wins":3,"losses":12,"totalScore":4200,"rating":"300.00"});
-    });
+beforeEach(() => {
+  resetEvents();
+});
 
-    test("Edge case: player with 0 games (should return 0)", () => {
-        const result = ratingPlayer(3)?.rating; 
-        expect(result).toStrictEqual("0.00");
-    });
+describe("Event Routes Integration Tests", () => {
 
-    test("Edge case: player with only wins", () => {       
-        const result = ratingPlayer(4);
-        expect(result).toStrictEqual({"id":4,"name":"Jack","wins":2,"losses":0,"totalScore":1000,"rating":"600.00"})
-    });
+  test("GET /health should return 200 OK", async () => {
+    const res = await request(app).get("/health");
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty("message");
+  });
 
-    test("Verify rounding to 2 decimal places", () =>{
-        const result = ratingPlayer(5)?.rating;
-        expect(result).toStrictEqual("900.00");
-    });
+  test("GET /events should return all events count", async () => {
+    const res = await request(app).get("/events");
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty("count", 3);
+  });
 
-    test("Finding a player that exists", () => {
-        const result = ratingPlayer(1);
-        expect (result).toStrictEqual({"id":1,"name":"ShadowStrike","wins":15,"losses":5,"totalScore":28500,"rating":"1500.00"});
-    });
+  test("GET /events/:id should return single event", async () => {
+    const res = await request(app).get("/events/1");
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty("id", 1);
+    expect(res.body.name).toBe("Tech Conference 2025");
+  });
 
-    test("Finding a player that exists", () => {
-        const result = ratingPlayer(6);
-        expect (result).toStrictEqual(undefined);
-    });
+  test("GET /events/:id/popularity should return event with tier", async () => {
+    const res = await request(app).get("/events/1/popularity");
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty("tier", "Hot"); // 185/200 = 92.5%
+  });
+
+  test("POST /events should create a new event", async () => {
+    const newEvent = { name: "New Event", capacity: 50 };
+    const res = await request(app).post("/events").send(newEvent);
+    expect(res.status).toBe(201);
+    expect(res.body).toHaveProperty("message", "Item created");
+    expect(res.body.data).toHaveProperty("name", "New Event");
+    expect(res.body.data).toHaveProperty("capacity", 50);
+    expect(typeof res.body.data.date).toBe("string");
+  });
+
+  test("DELETE /events/:id should return deleted event", async () => {
+    const res = await request(app).delete("/events/1");
+    expect(res.status).toBe(200);
+    expect(res.body).toHaveProperty("data");
+    expect(res.body.data).toHaveProperty("id", 1);
+
+    // Deleting a non-existing event
+    const res2 = await request(app).delete("/events/999");
+    expect(res2.status).toBe(404);
+  });
+
 });

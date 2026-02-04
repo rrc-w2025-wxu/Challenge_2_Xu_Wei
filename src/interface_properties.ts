@@ -4,6 +4,7 @@ export interface Event {
     date: string; 
     capacity: number;
     registrationCount: number;
+    tier?: string;
 }
 
 export interface Attendee {
@@ -19,6 +20,8 @@ export enum PopularityTier {
     Building = "Building",  // 25% to 49%
     New = "New"             // Below 25%
 }
+
+export type EventCreateInput = Pick<Event, "name" | "date" | "capacity">;
 
 export interface HealthCheckResponse {
     status: string;
